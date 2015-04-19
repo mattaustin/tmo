@@ -1,0 +1,8 @@
+[Desktop Entry]
+Encoding=UTF-8
+Version=1.0
+Type=Application
+Name=tmo
+Icon=icon-launcher-mad-developer
+Exec=sailfish-qml harbour-tmo
+X-Nemo-Application-Type=silica-qt5
