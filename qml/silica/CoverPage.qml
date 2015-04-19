@@ -24,7 +24,7 @@ CoverBackground {
 
 
     Image {
-        source: Qt.resolvedUrl('CoverBackground.png')
+        source: Qt.resolvedUrl('CoverBackground.svg')
         opacity: 0.1
         anchors.horizontalCenter: parent.horizontalCenter
         width: parent.width
