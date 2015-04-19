@@ -104,7 +104,7 @@ class ForumClient:
         if not hasattr(self, '_forums') or refresh:
             response = self.session.get(self.get_url())
             assert response.status_code == 200
-            html = BeautifulSoup(response.content)
+            html = BeautifulSoup(response.content, 'html.parser')
             links = html.select(
                 '#forumlist .forum_sub a[href^="forumdisplay"]')
             self._forums = [Forum.from_link(client=self, link=link)

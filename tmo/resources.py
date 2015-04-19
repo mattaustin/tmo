@@ -86,7 +86,7 @@ class Resource:
         if not self._html.get(url, False) or refresh:
             response = self._client.session.get(url)
             assert response.status_code == 200
-            self._html[url] = BeautifulSoup(response.content)
+            self._html[url] = BeautifulSoup(response.content, 'html.parser')
         return self._html[url]
 
     def get_url(self, **kwargs):

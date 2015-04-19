@@ -41,7 +41,7 @@ class Forum(Resource):
         """
 
         links = self._get_html(refresh=refresh).select(
-            '.page .DiscussionTopic > .threadTitle > a[href^="showthread"]')
+            '.DiscussionTopic .threadTitle a[href^="showthread"]')
 
         return [Thread.from_link(client=self._client, link=link)
                 for link in links]
