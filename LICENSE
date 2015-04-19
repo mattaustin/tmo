@@ -174,3 +174,10 @@
       of your accepting any such warranty or additional liability.
 
    END OF TERMS AND CONDITIONS
+
+
+'tmo' incorporates code from the requests library, which is also made available
+under the Apache license.
+
+'tmo' incorporates code from the beautifulsoup4 library, which is made
+available under the MIT license.

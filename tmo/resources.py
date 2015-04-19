@@ -15,9 +15,11 @@
 # limitations under the License.
 
 
+from urllib.parse import parse_qs, urlencode, urlparse
+
+from . import lib
 from bs4 import BeautifulSoup
 from bs4.element import Tag
-from urllib.parse import parse_qs, urlencode, urlparse
 
 
 class Resource:

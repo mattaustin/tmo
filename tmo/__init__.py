@@ -16,10 +16,12 @@
 
 
 from .forums import Forum
-from bs4 import BeautifulSoup
-from requests.adapters import HTTPAdapter
 import logging
 import requests
+
+from . import lib
+from bs4 import BeautifulSoup
+from requests.adapters import HTTPAdapter
 
 
 __title__ = 'tmo'
