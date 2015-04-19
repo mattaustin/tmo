@@ -25,7 +25,7 @@ from requests.adapters import HTTPAdapter
 
 
 __title__ = 'tmo'
-__version__ = '0.1.0'
+__version__ = '0.1.1'
 __url__ = 'https://github.com/mattaustin/tmo'
 __author__ = 'Matt Austin <mail@mattaustin.me.uk>'
 __copyright__ = 'Copyright 2015 Matt Austin'

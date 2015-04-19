@@ -1,10 +1,10 @@
 Name: harbour-tmo
-Version: 0.1
+Version: 0.1.1
 Release: 1
 Summary: An app for the talk.maemo.org community.
 URL: https://github.com/mattaustin/tmo
 License: ASL 2.0 and MIT
-Source: https://github.com/mattaustin/tmo/archive/0.1.tar.gz
+Source: https://github.com/mattaustin/tmo/archive/0.1.1.tar.gz
 BuildArch: noarch
 Requires: libsailfishapp-launcher
 Requires: pyotherside-qml-plugin-python3-qt5
