@@ -66,20 +66,20 @@ Python {
         });
     }
 
-    function getThreads(forum_url, page, callback) {
+    function getThreads(forum_id, page, callback) {
         busy += +1;
         importModule('tmo.qml', function() {
-            call('tmo.qml.get_threads', [forum_url, page], function(result) {
+            call('tmo.qml.get_threads', [forum_id, page], function(result) {
                 busy += -1;
                 typeof callback === 'function' && callback(result);
             });
         });
     }
 
-    function getPosts(thread_url, page, callback) {
+    function getPosts(thread_id, page, callback) {
         busy += +1;
         importModule('tmo.qml', function() {
-            call('tmo.qml.get_posts', [thread_url, page], function(result) {
+            call('tmo.qml.get_posts', [thread_id, page], function(result) {
                 busy += -1;
                 typeof callback === 'function' && callback(result);
             });

@@ -16,108 +16,54 @@
 
 
 from .forums import Forum
+from .posts import Post
+from .threads import Thread
+from xmlrpc.client import ServerProxy
 import logging
-import requests
-
-from . import lib
-from bs4 import BeautifulSoup
-from requests.adapters import HTTPAdapter
 
 
 __title__ = 'tmo'
-__version__ = '0.1.1'
+__version__ = '0.2'
 __url__ = 'https://github.com/mattaustin/tmo'
 __author__ = 'Matt Austin <mail@mattaustin.me.uk>'
 __copyright__ = 'Copyright 2015 Matt Austin'
 __license__ = 'Apache 2.0'
 
 
-class ForumClient:
+class Client:
     """Forum client.
 
     http://talk.maemo.org/
 
     """
 
-    _user_agent = '{name}/{version} ({name}; +{url})'.format(
-        name=__title__, version=__version__, url=__url__)
+    _forum_data = []
 
-    endpoint = 'http://talk.maemo.org/'
+    endpoint = 'http://talk.maemo.org/mobiquo/mobiquo.php'
 
-    logged_in = False
-
-    max_retries = 5
-
-    def __init__(self, endpoint=None, username=None, password=None):
-        """
-
-        :param str endpoint: Client endpoint URL. Defaults to 'talk.maemo.org'.
-        :param str username: Your forum account username.
-        :param str password: Your forum account password.
-
-        """
-
+    def __init__(self, endpoint=None):
         self._logger = self._get_logger()
-
         self._set_endpoint(endpoint)
-
-        self.username = username
-        self.password = password
-
-        self.session = self._create_session()
-
-        if self.username and self.password:
-            self.login()
-
-    def __repr__(self):
-        username = self.username or ''
-        return '<{0}: {1}>'.format(self.__class__.__name__, username)
-
-    def _get_logger(self):
-        return logging.getLogger(__name__)
-
-    def _create_session(self):
-        session = requests.Session()
-        session.mount(self.endpoint, HTTPAdapter(max_retries=self.max_retries))
-        session.headers = {'User-Agent': self._user_agent}
-        return session
+        self._serverproxy = ServerProxy(self.endpoint)
 
     def _set_endpoint(self, endpoint):
         self.endpoint = endpoint or self.endpoint
         self._logger.debug('Client endpoint set to: {0}'.format(self.endpoint))
 
-    def _construct_url(self, path):
-        return '{endpoint}{path}'.format(endpoint=self.endpoint,
-                                         path=path.strip())
+    def _get_logger(self):
+        return logging.getLogger(__name__)
 
-    def get_forums(self, refresh=False):
-        """Get the forums for this site.
+    def get_forums(self):
+        if not self._forum_data:
+            self._forum_data = self._serverproxy.get_forum()
+        return [Forum(client=self, data=data) for data in self._forum_data]
 
-        :param bool refresh: If True, any cached data is ignored and data is
-          fetched from the client. Default: False.
+    def get_posts(self, thread, start, end):
+        response = self._serverproxy.get_thread(thread.id, start, end).get(
+            'posts', [])
+        return [Post(client=self, data=data) for data in response]
 
-        :returns: List of :py:class:`~tmo.forums.Forum` instances.
-        :rtype: list
-
-        """
-
-        if not hasattr(self, '_forums') or refresh:
-            response = self.session.get(self.get_url())
-            assert response.status_code == 200
-            html = BeautifulSoup(response.content, 'html.parser')
-            links = html.select(
-                '#forumlist .forum_sub a[href^="forumdisplay"]')
-            self._forums = [Forum.from_link(client=self, link=link)
-                            for link in links]
-        return self._forums
-
-    def get_url(self):
-        return self._construct_url('index.php')
-
-    def login(self, *args, **kwargs):
-        """Login using session (cookie) authentication."""
-        raise NotImplementedError()
-
-    def logout(self, *args, **kwargs):
-        """Logout."""
-        raise NotImplementedError()
+    def get_threads(self, forum, start, end):
+        response = self._serverproxy.get_topic(forum.id, start, end).get(
+            'topics', [])
+        return [Thread(client=self, data=data) for data in response]

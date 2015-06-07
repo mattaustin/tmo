@@ -15,35 +15,29 @@
 # limitations under the License.
 
 
-from .posts import Post
-from .resources import Resource
+class Thread:
 
+    _data = {}
 
-class Thread(Resource):
-    """A thread."""
+    def __init__(self, client, id=None, data=None):
+        self.client = client
+        self._id = id
+        if data is not None:
+            self._data = data
 
-    _querystring_id_key = 't'
-
-    _url_path = 'showthread.php'
+    def __repr__(self):
+        return '<{0}: {1}>'.format(self.__class__.__name__, self)
 
     def __str__(self):
-        return '{0}'.format(self.title)
+        return self.title or self.id
 
-    def get_posts(self, refresh=False):
-        """Get the posts for this thread.
-
-        :param bool refresh: If True, any cached data is ignored and data is
-          fetched from the client. Default: False.
-
-        :returns: List of :py:class:`~tmo.posts.Post` instances.
-        :rtype: list
-
-        """
-
-        elements = self._get_html(refresh=refresh).select('#posts .page')
-        return [Post.from_html(client=self._client, html=html)
-                for html in elements]
+    @property
+    def id(self):
+        return self._id or self._data.get('topic_id')
 
     @property
     def title(self):
-        return self._data.get('name', self.id)
+        return str(self._data.get('topic_title'))
+
+    def get_posts(self, start, end):
+        return self.client.get_posts(thread=self, start=start, end=end)

@@ -15,37 +15,37 @@
 # limitations under the License.
 
 
-from .resources import Resource
-from .threads import Thread
+class Forum:
 
+    _data = {}
 
-class Forum(Resource):
-    """A forum."""
+    def __init__(self, client, id=None, data=None):
+        self.client = client
+        self._id = id
+        if data is not None:
+            self._data = data
 
-    _querystring_id_key = 'f'
-
-    _url_path = 'forumdisplay.php'
+    def __repr__(self):
+        return '<{0}: {1}>'.format(self.__class__.__name__, self)
 
     def __str__(self):
-        return '{0}'.format(self.name)
+        return self.name or self.id
 
-    def get_threads(self, refresh=False):
-        """Get the threads for this forum.
+    @property
+    def description(self):
+        return str(self._data.get('description'))
 
-        :param bool refresh: If True, any cached data is ignored and data is
-          fetched from the client. Default: False.
-
-        :returns: List of :py:class:`~tmo.threads.Thread` instances.
-        :rtype: list
-
-        """
-
-        links = self._get_html(refresh=refresh).select(
-            '.DiscussionTopic .threadTitle a[href^="showthread"]')
-
-        return [Thread.from_link(client=self._client, link=link)
-                for link in links]
+    @property
+    def id(self):
+        return self._id or self._data.get('forum_id')
 
     @property
     def name(self):
-        return self._data.get('name', self.id)
+        return str(self._data.get('forum_name'))
+
+    def get_forums(self):
+        return [Forum(client=self.client, data=data)
+                for data in self._data.get('child', [])]
+
+    def get_threads(self, start, end):
+        return self.client.get_threads(forum=self, start=start, end=end)

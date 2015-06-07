@@ -78,17 +78,17 @@ Page {
 
         }
 
-        PullDownMenu {
-            id: pullDownMenu
-            MenuItem {
-                text: 'Copy url'
-                onClicked: {Clipboard.text = forum.url;}
-            }
-            MenuItem {
-                text: 'Open website'
-                onClicked: {Qt.openUrlExternally(forum.url);}
-            }
-        }
+//        PullDownMenu {
+//            id: pullDownMenu
+//            MenuItem {
+//                text: 'Copy url'
+//                onClicked: {Clipboard.text = forum.url;}
+//            }
+//            MenuItem {
+//                text: 'Open website'
+//                onClicked: {Qt.openUrlExternally(forum.url);}
+//            }
+//        }
 
         onAtYEndChanged: {
             if (atYEnd && count && hasNextPage && !client.busy) {
@@ -98,7 +98,7 @@ Page {
         }
 
         function appendItems() {
-            client.getThreads(forum.url, pageNumber, function (result) {
+            client.getThreads(forum.id, pageNumber, function (result) {
                 result[0].forEach(function (item) {
                     model.append(item);
                 });

@@ -55,7 +55,7 @@ Page {
         }
 
         function appendItems() {
-            client.getPosts(thread.url, pageNumber, function (result) {
+            client.getPosts(thread.id, pageNumber, function (result) {
                 result[0].forEach(function (item) {
                     model.append(item);
                 });

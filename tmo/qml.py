@@ -15,10 +15,13 @@
 # limitations under the License.
 
 
-from tmo import ForumClient
+from tmo import Client
 from tmo.forums import Forum
 from tmo.threads import Thread
 import logging
+
+
+PAGINATE_BY = 50
 
 
 # Debug
@@ -26,26 +29,32 @@ logging.basicConfig()
 logging.getLogger().setLevel(logging.DEBUG)
 
 
-client = ForumClient()
+client = Client()
 
 
 def get_forums():
-    forums = client.get_forums()
-    return [{'url': forum.get_url(), 'name': forum.name} for forum in forums]
+    categories = client.get_forums()
+    forums = []
+    for category in categories:
+        forums += category.get_forums()
+    return [{'id': forum.id, 'name': forum.name} for forum in forums]
 
 
-def get_threads(forum_url, page):
-    forum = Forum.from_link(client=client, link=forum_url)
-    forum.page = page
-    threads = forum.get_threads()
-    return [[{'url': thread.get_url(), 'title': thread.title}
-            for thread in threads], forum.has_next_page]
+def get_threads(forum_id, page):
+    forum = Forum(client=client, id=forum_id)
+    end = (page * PAGINATE_BY) - 1
+    start = (page * PAGINATE_BY) - PAGINATE_BY
+    threads = forum.get_threads(start=start, end=end)
+    return [[{'id': thread.id, 'title': thread.title}
+             for thread in threads], True]  # forum.has_next_page]
 
 
-def get_posts(thread_url, page):
-    thread = Thread.from_link(client=client, link=thread_url)
-    thread.page = page
-    posts = thread.get_posts()
-    return [[{'url': post.get_url(), 'content': post.content,
-              'member': '{}'.format(post.member), 'datetime': post.datetime}
-             for post in posts], thread.has_next_page]
+def get_posts(thread_id, page):
+    thread = Thread(client=client, id=thread_id)
+    end = (page * PAGINATE_BY) - 1
+    start = (page * PAGINATE_BY) - PAGINATE_BY
+    posts = thread.get_posts(start=start, end=end)
+    return [[{'id': post.id, 'content': post.content,
+              'member': '{}'.format(post._data['post_author_name']),
+              'datetime': post.datetime}
+             for post in posts], True]  # thread.has_next_page]

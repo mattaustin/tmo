@@ -64,35 +64,35 @@ Page {
 
             ContextMenu {
                 id: contextMenu
-                MenuItem {
-                    text: 'Copy url'
-                    onClicked: {
-                        Clipboard.text = model.url;
-                        contextMenu.hide();
-                    }
-                }
-                MenuItem {
-                    text: 'Open website'
-                    onClicked: {
-                        Qt.openUrlExternally(model.url);
-                        contextMenu.hide();
-                    }
-                }
+//                MenuItem {
+//                    text: 'Copy url'
+//                    onClicked: {
+//                        Clipboard.text = model.url;
+//                        contextMenu.hide();
+//                    }
+//                }
+//                MenuItem {
+//                    text: 'Open website'
+//                    onClicked: {
+//                        Qt.openUrlExternally(model.url);
+//                        contextMenu.hide();
+//                    }
+//                }
             }
 
         }
 
-        PullDownMenu {
-            id: pullDownMenu
-            MenuItem {
-                text: 'Copy url'
-                onClicked: {Clipboard.text = thread.url;}
-            }
-            MenuItem {
-                text: 'Open website'
-                onClicked: {Qt.openUrlExternally(thread.url);}
-            }
-        }
+//        PullDownMenu {
+//            id: pullDownMenu
+//            MenuItem {
+//                text: 'Copy url'
+//                onClicked: {Clipboard.text = thread.url;}
+//            }
+//            MenuItem {
+//                text: 'Open website'
+//                onClicked: {Qt.openUrlExternally(thread.url);}
+//            }
+//        }
 
         onAtYEndChanged: {
             if (atYEnd && count && hasNextPage && !client.busy) {
@@ -102,7 +102,7 @@ Page {
         }
 
         function appendItems() {
-            client.getPosts(thread.url, pageNumber, function (result) {
+            client.getPosts(thread.id, pageNumber, function (result) {
                 result[0].forEach(function (item) {
                     model.append(item);
                 });

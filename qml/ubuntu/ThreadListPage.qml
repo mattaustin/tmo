@@ -63,7 +63,7 @@ Page {
         }
 
         function appendItems() {
-            client.getThreads(forum.url, pageNumber, function (result) {
+            client.getThreads(forum.id, pageNumber, function (result) {
                 result[0].forEach(function (item) {
                     model.append(item);
                 });

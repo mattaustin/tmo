@@ -15,49 +15,39 @@
 # limitations under the License.
 
 
-from .members import Member
-from .resources import Resource
-from datetime import datetime, timedelta
+from datetime import datetime
 
 
-class Post(Resource):
-    """A post."""
+class Post:
 
-    _querystring_id_key = 'p'
+    _data = {}
 
-    _url_path = 'showpost.php'
+    def __init__(self, client, id=None, data=None):
+        self.client = client
+        self._id = id
+        if data is not None:
+            self._data = data
+
+    def __repr__(self):
+        return '<{0}: {1}>'.format(self.__class__.__name__, self)
 
     def __str__(self):
-        return '{0} {1}'.format(self.member, self.datetime)
-
-    @classmethod
-    def from_html(class_, client, html):
-        member_link = html.select('.username [href^="member"]')[0]
-        member = Member.from_link(client=client, link=member_link)
-        postdate = html.select('.postdate')[0]
-        postdetails = html.select('.postdetails')[0]
-        for signature in postdetails.select('.signature'):
-            signature.decompose()
-        content = postdetails.text.strip()
-        link = html.select('a[href^="showpost"]')[0]
-        return class_.from_link(client=client, link=link,
-                                data={'content': content, 'member': member,
-                                      'postdate': postdate})
+        return self.title or self.id
 
     @property
     def content(self):
-        return self._data.get('content')
+        return str(self._data.get('post_content'))
 
     @property
     def datetime(self):
-        d = self._data.get('postdate')
-        postdate = ' '.join([i.strip() for i in d.text.split(',')])
-        today = datetime.today().strftime('%Y-%m-%d')
-        yesterday = (datetime.today() - timedelta(days=1)).strftime('%Y-%m-%d')
-        postdate = postdate.replace('Today', today)
-        postdate = postdate.replace('Yesterday', yesterday)
-        return datetime.strptime(postdate, '%Y-%m-%d %H:%M')
+        # TODO - Does API always return datetime in UTC?
+        return datetime.strptime(self._data['post_time'].value,
+                                 '%Y%m%dT%H:%M:%S+00:00')
 
     @property
-    def member(self):
-        return self._data.get('member')
+    def id(self):
+        return self._id or self._data.get('post_id')
+
+    @property
+    def title(self):
+        return str(self._data.get('post_title'))
